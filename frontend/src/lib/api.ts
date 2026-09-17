@@ -9,24 +9,23 @@ import {
 
 const STORAGE_KEY = "cartflow_api_base";
 export const DEFAULT_API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8000";
+  process.env.NEXT_PUBLIC_API_BASE ||
+  process.env.NEXT_API_BASE ||
+  "http://localhost:8000";
 
 export function getApiBase(): string {
+  // If NEXT_PUBLIC_API_BASE or NEXT_API_BASE was explicitly set at build/deploy time to a production URL,
+  // use it directly so stale browser localStorage (e.g. from localhost development) doesn't hijack requests.
+  const envBase = process.env.NEXT_PUBLIC_API_BASE || process.env.NEXT_API_BASE;
+  if (envBase && envBase.trim()) {
+    return envBase.trim().replace(/\/+$/, "");
+  }
+
   if (typeof window !== "undefined") {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return saved.replace(/\/+$/, "");
+    if (saved && saved.trim()) return saved.trim().replace(/\/+$/, "");
   }
   return DEFAULT_API_BASE.replace(/\/+$/, "");
-}
-
-export function setApiBase(url: string): void {
-  if (typeof window !== "undefined") {
-    if (!url.trim()) {
-      localStorage.removeItem(STORAGE_KEY);
-    } else {
-      localStorage.setItem(STORAGE_KEY, url.trim().replace(/\/+$/, ""));
-    }
-  }
 }
 
 export class ApiError extends Error {
