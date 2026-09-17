@@ -17,7 +17,6 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
 lib64/
 parts/
 sdist/
@@ -63,8 +62,10 @@ storage/vector_databases/*
 !storage/vector_databases/.gitkeep
 storage/feedbacks/*
 !storage/feedbacks/.gitkeep
+!storage/feedbacks/feedback_storage.csv
 storage/deferred_cases/*
 !storage/deferred_cases/.gitkeep
+!storage/deferred_cases/cases.csv
 storage/conversation/*
 !storage/conversation/.gitkeep
 
