@@ -1,0 +1,78 @@
+﻿# Environment & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Node & Next.js
+node_modules/
+frontend2/node_modules/
+.next/
+frontend2/.next/
+out/
+frontend2/out/
+.turbo/
+frontend2/.turbo/
+*.tsbuildinfo
+next-env.d.ts
+
+# Logs & Tracing
+logs/
+*.log
+*.jsonl
+mlruns/
+storage/mlflow/*
+!storage/mlflow/.gitkeep
+
+# Local SQLite & Vector Storage
+storage/checkpoints/*
+!storage/checkpoints/.gitkeep
+storage/vector_databases/*
+!storage/vector_databases/.gitkeep
+storage/feedbacks/*
+!storage/feedbacks/.gitkeep
+storage/deferred_cases/*
+!storage/deferred_cases/.gitkeep
+storage/conversation/*
+!storage/conversation/.gitkeep
+
+# OS / Editor Artifacts
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo

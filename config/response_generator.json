@@ -1,0 +1,13 @@
+{
+    "response_generater": {
+        "v1": {
+            "prompt_path": "prompts/response_generater/v1_system.txt",
+            "config": {
+                "model": "qwen/qwen3.8-27b",
+                "temperature": 0.0,
+                "max_tockens":512
+            }
+            
+        }
+    }
+}

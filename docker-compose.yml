@@ -1,0 +1,31 @@
+﻿version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cartflow-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MOCK_LLM=true
+      # Set api_key if running with a real LLM provider:
+      # - api_key=your_groq_api_key_here
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend2
+      dockerfile: Dockerfile
+    container_name: cartflow-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_BASE=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
