@@ -123,7 +123,8 @@ def _generate_grounded_answer(user_msg: str) -> str:
         # LLM-side safety net for the same "don't invent an answer" rule.
         return "I don't know — the retrieved context doesn't contain a clear answer to that question."
 
-    return "Based on the knowledge base: " + " ".join(top)
+    bullet_points = "\n".join(f"- {s.strip()}" for s in top)
+    return f"📋 **Relevant Policy Information**\n\n{bullet_points}"
 
 
 # ---------------------------------------------------------------------------

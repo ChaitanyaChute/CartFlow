@@ -117,6 +117,8 @@ def call_sql_tool(state: AgentState) -> dict:
     if record_id:
         print(f"\n--- Calling check_order_status for {record_id} ---")
         output = check_order_status(record_id)
+        if isinstance(output, dict) and "formatted_message" in output:
+            return {"tool_output": output["formatted_message"]}
         return {"tool_output": str(output)}
     else:
         return {"tool_output": "Could not extract a valid order ID from your query. Please provide it in the format ORDXXXX."}

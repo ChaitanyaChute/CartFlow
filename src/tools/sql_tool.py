@@ -28,14 +28,29 @@ def check_order_status(record_id: str) -> dict:
 
         escalation_score = (normalized_days * 0.7) + (1 if delayed_shipment else 0) * 0.3
 
+        status_icon = "✅" if status in ("Delivered", "Refunded") else "⏳"
+        delayed_str = "⚠️ Yes (Shipment delayed)" if delayed_shipment else "No"
+        risk_level = "High" if escalation_score >= 0.7 else "Moderate" if escalation_score >= 0.4 else "Low"
+
+        formatted_msg = (
+            f"📦 **Order Status Overview** ({record_id})\n"
+            f"- **Category:** {category}\n"
+            f"- **Current Status:** {status_icon} {status}\n"
+            f"- **Order Value:** ₹{order_value_inr:,}\n"
+            f"- **Created:** {days_since_created} days ago\n"
+            f"- **Delayed Shipment:** {delayed_str}\n"
+            f"- **Escalation Risk:** {risk_level} ({escalation_score})"
+        )
+
         return {
             "record_id": record_id,
-            "category":category,
+            "category": category,
             "status": status,
             "order_value_inr": order_value_inr,
             "days_since_created": days_since_created,
             "delayed_shipment": bool(delayed_shipment),
-            "escalation_score": round(escalation_score, 4)
+            "escalation_score": round(escalation_score, 4),
+            "formatted_message": formatted_msg,
         }
     else:
         return {"error": f"Order with record_id {record_id} not found."}
