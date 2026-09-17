@@ -1,4 +1,4 @@
-﻿# CartFlow — Production Agentic E-Commerce Support Desk
+# CartFlow — Production Agentic E-Commerce Support Desk
 
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.141.1-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Next.js-16.3-black.svg?logo=next.js&logoColor=white)](https://nextjs.org)
@@ -17,7 +17,7 @@
       │
       │ HTTP / REST (CORS enabled)
       ▼
-[Next.js Support Desk UI (frontend2)] ─── Port 3000
+[Next.js Support Desk UI (frontend)] ─── Port 3000
       │
       │ /api/chat, /api/threads, /api/documents/upload
       ▼
@@ -88,7 +88,7 @@ cartflow/
 │   ├── insights/
 │   ├── results/
 │   └── scripts/
-├── frontend2/              # Next.js 16 + React 19 + Tailwind CSS Support Desk
+├── frontend/               # Next.js 16 + React 19 + Tailwind CSS Support Desk
 │   ├── src/app/            # App router, layouts, pages
 │   ├── src/components/     # ChatArea, Sidebar, Composer, SettingsModal
 │   └── src/lib/api.ts      # Backend API client
@@ -148,7 +148,7 @@ API Documentation will be live at: [http://127.0.0.1:8000/docs](http://127.0.0.1
 
 **Terminal 2 — Frontend (Next.js):**
 ```bash
-cd frontend2
+cd frontend
 npm run dev
 ```
 Support Desk UI will be live at: [http://localhost:3000](http://localhost:3000)
@@ -191,7 +191,7 @@ Execute the core demonstration suite (verifying multi-turn memory, PII masking, 
 
 Run frontend production build verification:
 ```bash
-npm --prefix frontend2 run build
+npm --prefix frontend run build
 ```
 
 ---

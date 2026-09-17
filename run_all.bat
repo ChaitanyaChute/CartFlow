@@ -8,6 +8,6 @@ echo ===================================================
 
 start "CartFlow Backend (FastAPI)" cmd /k ".\.venv\Scripts\python.exe -m uvicorn src.agent.main:app --host 127.0.0.1 --port 8000 --reload"
 timeout /t 3 /nobreak >nul
-start "CartFlow Frontend (Next.js)" cmd /k "cd frontend2 && npm run dev"
+start "CartFlow Frontend (Next.js)" cmd /k "cd frontend && npm run dev"
 
 echo Both services launched in separate windows!

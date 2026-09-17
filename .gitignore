@@ -1,4 +1,4 @@
-﻿# Environment & Secrets
+# Environment & Secrets
 .env
 .env.local
 .env.*.local
@@ -38,13 +38,13 @@ venv.bak/
 
 # Node & Next.js
 node_modules/
-frontend2/node_modules/
+frontend/node_modules/
 .next/
-frontend2/.next/
+frontend/.next/
 out/
-frontend2/out/
+frontend/out/
 .turbo/
-frontend2/.turbo/
+frontend/.turbo/
 *.tsbuildinfo
 next-env.d.ts
 
