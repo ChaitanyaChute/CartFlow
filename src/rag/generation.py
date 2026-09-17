@@ -1,38 +1,31 @@
-from datetime import datetime
-from src.config import ( api_key,
-                        rag_prompt,
-                        rag_temperature,
-                        rag_model
-                        )
+import logging
 
-from src.rag.retrieval import( retrieve_chunks
-                              ,retreiver, retrieve_chunks_with_score)
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    wait_exponential,
+    before_sleep_log,
+)
+
+from src.config import (
+    rag_prompt,
+    rag_temperature,
+    rag_model,
+)
+
+from src.rag.retrieval import (
+    retrieve_chunks,
+    retreiver,
+    retrieve_chunks_with_score,
+)
+
 from src.llm_client import get_llm_client
 
-from langchain_community.embeddings.sentence_transformer import SentenceTransformerEmbeddings
-from langchain_classic.vectorstores import Chroma
-
-SIMILARITY_THRESHOLD=0.3282
-
-from groq import Groq
-client=get_llm_client()
-
-# For Api Rate limiting
-import logging
-from tenacity import (
-     retry,  # Decorator that wraps a function with retry logic
-    stop_after_attempt,  # Stop after N total attempts
-    wait_exponential,  # Wait 1s, 2s, 4s, 8s between retries
-    before_sleep_log, 
-
-)
+SIMILARITY_THRESHOLD = 0.3282
 
 logger = logging.getLogger("rag_generation")
 
-
-attempt_counter={"n":0}
-
-
+client = get_llm_client()
 
 qna_user_message_template = """
 ###Context
@@ -43,65 +36,132 @@ Here are some documents and their source that may be relevant to the question me
 {question}
 """
 
-
 @retry(
     stop=stop_after_attempt(4),
-    wait=wait_exponential(multiplier=1,min=1,max=10),
-    before_sleep=before_sleep_log(logger,logging.WARNING)
+    wait=wait_exponential(
+        multiplier=1,
+        min=1,
+        max=10,
+    ),
+    before_sleep=before_sleep_log(
+        logger,
+        logging.WARNING,
+    ),
 )
 def rag_generate(user_input: str) -> str:
+    """
+    Retrieve relevant documents and generate an answer using the LLM.
+    """
 
-   
+    relevant_document_chunks = retrieve_chunks(
+        user_input,
+        retreiver,
+    )
 
-    relevant_document_chunks =retrieve_chunks(user_input,retreiver)
-    context_list = [d.page_content + "\n ###Source: " + d.metadata['source'] + "\n\n " for d in relevant_document_chunks]
+    context_list = [
+        d.page_content
+        + "\n ###Source: "
+        + d.metadata.get("source", "unknown")
+        + "\n\n"
+        for d in relevant_document_chunks
+    ]
 
     context_for_query = ". ".join(context_list)
-    # print("context: ", context_for_query)  # Use this to understand what context is provided BTS and to debug.
+
     prompt = [
-        {'role':'system', 'content': rag_prompt},
-        {'role': 'user', 'content': qna_user_message_template.format(
-            context=context_for_query,
-            question=user_input
-            )
-        }
+        {
+            "role": "system",
+            "content": rag_prompt,
+        },
+        {
+            "role": "user",
+            "content": qna_user_message_template.format(
+                context=context_for_query,
+                question=user_input,
+            ),
+        },
     ]
 
     try:
         logger.info("RAG API CALL")
+
         response = client.chat.completions.create(
-        model=rag_model,
-        messages=prompt,
-        temperature=rag_temperature
+            model=rag_model,
+            messages=prompt,
+            temperature=rag_temperature,
         )
 
         prediction = response.choices[0].message.content
+
         logger.info("RAG API SUCCESS")
-    except Exception as e:
-        logger.error(f"RAG API FAILED: {e}")
+
+        return prediction
+
+    except Exception as exc:
+        logger.error(
+            "RAG API FAILED: %s",
+            exc,
+        )
         raise
 
-    return prediction
+def rag_generate_with_score(
+    user_input: str,
+    return_score: bool = False,
+):
+    """
+    Retrieve documents, calculate similarity, and generate an answer.
+    """
 
+    relevant_document_chunks, top1_score = retrieve_chunks_with_score(
+        user_input
+    )
 
-def rag_generate_with_score(user_input: str, return_score: bool = False):
-    relevant_document_chunks, top1_score = retrieve_chunks_with_score(user_input)
-    context_list = [d.page_content + "\n ###Source: " + d.metadata['source'] + "\n\n " for d in relevant_document_chunks]
+    context_list = [
+        d.page_content
+        + "\n ###Source: "
+        + d.metadata.get("source", "unknown")
+        + "\n\n"
+        for d in relevant_document_chunks
+    ]
+
     context_for_query = ". ".join(context_list)
 
     prompt = [
-        {'role': 'system', 'content': rag_prompt},
-        {'role': 'user', 'content': qna_user_message_template.format(
-            context=context_for_query, question=user_input)}
+        {
+            "role": "system",
+            "content": rag_prompt,
+        },
+        {
+            "role": "user",
+            "content": qna_user_message_template.format(
+                context=context_for_query,
+                question=user_input,
+            ),
+        },
     ]
 
     try:
         logger.info("RAG API CALL")
-        response = client.chat.completions.create(model=rag_model, messages=prompt, temperature=rag_temperature)
+
+        response = client.chat.completions.create(
+            model=rag_model,
+            messages=prompt,
+            temperature=rag_temperature,
+        )
+
         prediction = response.choices[0].message.content
+
         logger.info("RAG API SUCCESS")
-    except Exception as e:
-        logger.error(f"RAG API FAILED: {e}")
+
+    except Exception as exc:
+        logger.error(
+            "RAG API FAILED: %s",
+            exc,
+        )
         raise
 
-    return (prediction, top1_score) if return_score else prediction
+    return (
+        (prediction, top1_score)
+        if return_score
+        else prediction
+    )
