@@ -243,7 +243,7 @@ export default function Sidebar({
             onClick={onOpenSettings}
             className="text-[11px] font-mono underline hover:text-[#1b2430]"
           >
-            Config
+            Test Ping
           </button>
         </div>
       </aside>

@@ -80,25 +80,9 @@ function SettingsModalDialog({
         </div>
 
         <div className="space-y-4">
-          <div>
-            <label className="block text-xs font-mono uppercase tracking-wider text-[#4a5568] mb-1">
-              API Base URL
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={url}
-                readOnly
-                disabled
-                placeholder="http://localhost:8000"
-                className="flex-1 bg-[#e7dfce] border border-[#a9a08c] px-3 py-2 text-sm font-mono text-[#4a5568] cursor-not-allowed outline-none select-none opacity-80"
-              />
-            </div>
-            <p className="text-[11.5px] text-[#4a5568] mt-1.5 flex items-center gap-1.5">
-              <span>Configured backend endpoint:</span>
-              <code className="font-mono bg-[#d9cbb0]/60 px-1 py-0.5 rounded text-[#1b2430] font-semibold">{url}</code>
-            </p>
-          </div>
+          <p className="text-xs text-[#4a5568] leading-relaxed">
+            Test and verify the live connection to the CartFlow backend service:
+          </p>
 
           {testResult && (
             <div
