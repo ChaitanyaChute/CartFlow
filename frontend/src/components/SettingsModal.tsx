@@ -1,28 +1,26 @@
 "use client";
 
 import React, { useState } from "react";
-import { getApiBase, setApiBase, DEFAULT_API_BASE } from "@/lib/api";
-import { X, Check, Server, RefreshCw, RotateCcw } from "lucide-react";
+import { getApiBase } from "@/lib/api";
+import { X, Server, RefreshCw } from "lucide-react";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onSaved: () => void;
+  onSaved?: () => void;
 }
 
-export default function SettingsModal({ isOpen, onClose, onSaved }: Props) {
+export default function SettingsModal({ isOpen, onClose }: Props) {
   if (!isOpen) return null;
-  return <SettingsModalDialog onClose={onClose} onSaved={onSaved} />;
+  return <SettingsModalDialog onClose={onClose} />;
 }
 
 function SettingsModalDialog({
   onClose,
-  onSaved,
 }: {
   onClose: () => void;
-  onSaved: () => void;
 }) {
-  const [url, setUrl] = useState(() => getApiBase());
+  const [url] = useState(() => getApiBase());
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<{
     ok: boolean;
@@ -55,16 +53,6 @@ function SettingsModalDialog({
     } finally {
       setTesting(false);
     }
-  };
-
-  const handleSave = () => {
-    setApiBase(url.trim());
-    onSaved();
-    onClose();
-  };
-
-  const handleReset = () => {
-    setUrl(DEFAULT_API_BASE);
   };
 
   return (
@@ -100,21 +88,15 @@ function SettingsModalDialog({
               <input
                 type="text"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                readOnly
+                disabled
                 placeholder="http://localhost:8000"
-                className="flex-1 bg-[#f7f3ea] border border-[#a9a08c] px-3 py-2 text-sm font-mono text-[#1b2430] focus:border-[#1b2430] outline-none"
+                className="flex-1 bg-[#e7dfce] border border-[#a9a08c] px-3 py-2 text-sm font-mono text-[#4a5568] cursor-not-allowed outline-none select-none opacity-80"
               />
-              <button
-                type="button"
-                onClick={handleReset}
-                title="Reset to default URL"
-                className="px-2.5 py-2 border border-[#a9a08c] bg-[#d9cbb0] hover:bg-[#c7b797] text-[#1b2430] text-xs font-mono transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </button>
             </div>
-            <p className="text-[11.5px] text-[#4a5568] mt-1.5">
-              Default: <code className="font-mono bg-[#d9cbb0]/40 px-1 py-0.5 rounded">{DEFAULT_API_BASE}</code>
+            <p className="text-[11.5px] text-[#4a5568] mt-1.5 flex items-center gap-1.5">
+              <span>Configured backend endpoint:</span>
+              <code className="font-mono bg-[#d9cbb0]/60 px-1 py-0.5 rounded text-[#1b2430] font-semibold">{url}</code>
             </p>
           </div>
 
@@ -145,17 +127,9 @@ function SettingsModalDialog({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-3 py-1.5 text-xs text-[#4a5568] hover:text-[#1b2430]"
+                className="px-4 py-1.5 bg-[#1b2430] text-[#efe9dc] hover:bg-[#4a5568] text-xs font-medium transition-colors"
               >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSave}
-                className="px-4 py-1.5 bg-[#b03a2e] text-[#fff5ef] hover:bg-[#8f2e24] text-xs font-medium flex items-center gap-1.5 transition-colors"
-              >
-                <Check className="w-3.5 h-3.5" />
-                Save & Apply
+                Close
               </button>
             </div>
           </div>
